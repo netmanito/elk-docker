@@ -1,5 +1,5 @@
 # Dockerfile for ELK stack
-# Elasticsearch, Logstash, Kibana 5.2.1
+# Elasticsearch, Logstash, Kibana 5.2.2
 
 # Build with:
 # docker build -t <repo-user>/elk .
@@ -40,7 +40,7 @@ RUN set -x \
  && set +x
 
 
-ENV ELK_VERSION 5.2.1
+ENV ELK_VERSION 5.2.2
 
 ### install Elasticsearch
 
@@ -130,6 +130,8 @@ RUN chmod -R +r /etc/elasticsearch
 RUN mkdir -p /etc/pki/tls/certs && mkdir /etc/pki/tls/private
 ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
+ADD ./logstash.yml /etc/logstash
+ADD ./logstash.yml /opt/logstash/config
 
 # filters
 ADD ./01-tcp-input.conf /etc/logstash/conf.d/01-tcp-input.conf
