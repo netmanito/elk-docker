@@ -116,7 +116,7 @@ fi
 ### Logstash
 
 if [ -z "$LOGSTASH_START" ]; then
-  LOGSTASH_START=1
+  LOGSTASH_START=0
 fi
 if [ "$LOGSTASH_START" -ne "1" ]; then
   echo "LOGSTASH_START is set to something different from 1, not starting..."

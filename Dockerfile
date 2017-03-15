@@ -23,7 +23,7 @@ ENV GOSU_VERSION 1.8
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x \
  && apt-get update -qq \
- && apt-get install -qqy --no-install-recommends ca-certificates curl \
+ && apt-get install -qqy --no-install-recommends ca-certificates curl vim\
  && rm -rf /var/lib/apt/lists/* \
  && curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
  && curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -36,6 +36,7 @@ RUN set -x \
  && apt-get update -qq \
  && apt-get install -qqy openjdk-8-jdk \
  && apt-get clean \
+ && echo "vm.max_map_count=262144" >> /etc/sysctl.conf \
  && set +x
 
 
@@ -116,6 +117,9 @@ RUN sed -i -e 's#^KIBANA_HOME=$#KIBANA_HOME='$KIBANA_HOME'#' /etc/init.d/kibana 
 ADD ./elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
 ADD ./elasticsearch-log4j2.properties /etc/elasticsearch/log4j2.properties
 ADD ./elasticsearch-jvm.options /etc/elasticsearch/jvm.options
+ADD ./elasticsearch.yml /opt/elasticsearch/config/elasticsearch.yml
+ADD ./elasticsearch-log4j2.properties /opt/elasticsearch/config/log4j2.properties
+ADD ./elasticsearch-jvm.options /opt/elasticsearch/config/jvm.options
 ADD ./elasticsearch-default /etc/default/elasticsearch
 RUN chmod -R +r /etc/elasticsearch
 
@@ -128,6 +132,7 @@ ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
 
 # filters
+ADD ./01-tcp-input.conf /etc/logstash/conf.d/01-tcp-input.conf
 ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
 ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
 ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
@@ -162,7 +167,7 @@ ADD ./kibana.yml ${KIBANA_HOME}/config/kibana.yml
 ADD ./start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 5601 9200 9300 5044
+EXPOSE 5601 9200 9300 5044 5045
 VOLUME /var/lib/elasticsearch
 
 CMD [ "/usr/local/bin/start.sh" ]

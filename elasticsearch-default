@@ -21,7 +21,7 @@
 #PID_DIR=/var/run/elasticsearch
 
 # Additional Java OPTS
-#ES_JAVA_OPTS=
+ES_JAVA_OPTS="-Xms512m -Xmx512m"
 
 # Configure restart on package upgrade (true, every other setting will lead to not restarting)
 #RESTART_ON_UPGRADE=true
