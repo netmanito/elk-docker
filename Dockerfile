@@ -23,7 +23,7 @@ ENV GOSU_VERSION 1.8
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x \
  && apt-get update -qq \
- && apt-get install -qqy --no-install-recommends ca-certificates curl vim\
+ && apt-get install -qqy --no-install-recommends ca-certificates curl vim netcat inetutils-tools\
  && rm -rf /var/lib/apt/lists/* \
  && curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
  && curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -78,8 +78,8 @@ RUN mkdir ${LOGSTASH_HOME} \
  && rm -f ${LOGSTASH_PACKAGE} \
  && groupadd -r logstash -g ${LOGSTASH_GID} \
  && useradd -r -s /usr/sbin/nologin -d ${LOGSTASH_HOME} -c "Logstash service user" -u ${LOGSTASH_UID} -g logstash logstash \
- && mkdir -p /var/log/logstash /etc/logstash/conf.d \
- && chown -R logstash:logstash ${LOGSTASH_HOME} /var/log/logstash
+ && mkdir -p /var/log/logstash /etc/logstash/conf.d /var/lib/logstash \
+ && chown -R logstash:logstash ${LOGSTASH_HOME} /var/log/logstash /var/lib/logstash
 
 ADD ./logstash-init /etc/init.d/logstash
 RUN sed -i -e 's#^LS_HOME=$#LS_HOME='$LOGSTASH_HOME'#' /etc/init.d/logstash \
