@@ -1,5 +1,5 @@
 # Dockerfile for ELK stack
-# Elasticsearch, Logstash, Kibana 5.2.2
+# Elasticsearch, Logstash, Kibana 5.3.0
 
 # Build with:
 # docker build -t <repo-user>/elk .
@@ -23,7 +23,7 @@ ENV GOSU_VERSION 1.8
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x \
  && apt-get update -qq \
- && apt-get install -qqy --no-install-recommends ca-certificates curl vim netcat inetutils-tools\
+ && apt-get install -qqy --no-install-recommends ca-certificates curl vim net-tools\
  && rm -rf /var/lib/apt/lists/* \
  && curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
  && curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -40,7 +40,7 @@ RUN set -x \
  && set +x
 
 
-ENV ELK_VERSION 5.2.2
+ENV ELK_VERSION 5.3.0
 
 ### install Elasticsearch
 
@@ -146,6 +146,10 @@ RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
 # Fix permissions
 RUN chmod -R +r /etc/logstash
+
+## Other stuff
+ADD ./deleteindex.sh /usr/bin/deleteindex.sh
+RUN chmod +x /usr/bin/deleteindex.sh
 
 ### configure logrotate
 
