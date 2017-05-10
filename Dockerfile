@@ -63,6 +63,8 @@ ADD ./elasticsearch-init /etc/init.d/elasticsearch
 RUN sed -i -e 's#^ES_HOME=$#ES_HOME='$ES_HOME'#' /etc/init.d/elasticsearch \
  && chmod +x /etc/init.d/elasticsearch
 
+RUN gosu elasticsearch bin/elasticsearch-plugin install \
+    -Edefault.path.conf=/etc/elasticsearch ingest-geoip
 
 ### install Logstash
 
@@ -122,7 +124,7 @@ ADD ./elasticsearch-log4j2.properties /opt/elasticsearch/config/log4j2.propertie
 ADD ./elasticsearch-jvm.options /opt/elasticsearch/config/jvm.options
 ADD ./elasticsearch-default /etc/default/elasticsearch
 RUN chmod -R +r /etc/elasticsearch
-
+RUN cp -a /opt/elasticsearch/config/ingest-geoip /etc/elasticsearch/
 
 ### configure Logstash
 
@@ -136,13 +138,20 @@ ADD ./logstash.yml /opt/logstash/config
 # filters
 ADD ./01-tcp-input.conf /etc/logstash/conf.d/01-tcp-input.conf
 ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
+ADD ./logstash-tcpdump/conf.d/03-tcpdump-input.conf /etc/logstash/conf.d/03-tcpdump-input.conf
 ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
 ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
-ADD ./30-output.conf /etc/logstash/conf.d/30-output.conf
+ADD ./logstash-tcpdump/conf.d/20-tcpdump.conf /etc/logstash/conf.d/20-tcpdump.conf
+ADD ./logstash-tcpdump/conf.d/30-output.conf /etc/logstash/conf.d/30-output.conf
 
 # patterns
 ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
 RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
+
+# templates 
+# you need to add a template that supports geoip, run the below once the container is running and before ingest data
+# curl -XPUT 'http://localhost:9200/_template/logstash?pretty' -d@logstash-index-template.json
+ADD ./logstash-tcpdump/logstash-index-template.json /etc/logstash/
 
 # Fix permissions
 RUN chmod -R +r /etc/logstash
@@ -173,7 +182,7 @@ ADD ./kibana.yml ${KIBANA_HOME}/config/kibana.yml
 ADD ./start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 5601 9200 9300 5044 5045
+EXPOSE 5601 9200 9300 5044 5045 5046
 VOLUME /var/lib/elasticsearch
 
 CMD [ "/usr/local/bin/start.sh" ]
