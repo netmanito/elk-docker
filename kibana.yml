@@ -99,3 +99,6 @@ server.host: "0.0.0.0"
 # Set the interval in milliseconds to sample system and process performance
 # metrics. Minimum is 100ms. Defaults to 5000.
 #ops.interval: 5000
+#
+# if x-pack enabled, disable security access
+# xpack.security.enabled: false
