@@ -30,11 +30,9 @@
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
-#path.data: /path/to/data
-#
-# Path to log files:
-#
-#path.logs: /path/to/logs
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+path.repo: /var/lib/backup
 #
 # ----------------------------------- Memory -----------------------------------
 #
@@ -87,3 +85,4 @@ network.host: 0.0.0.0
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+reindex.remote.whitelist: ["172.16.23.102:9200"]

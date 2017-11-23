@@ -23,7 +23,7 @@ ENV GOSU_VERSION 1.8
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x \
  && apt-get update -qq \
- && apt-get install -qqy --no-install-recommends ca-certificates curl vim net-tools\
+ && apt-get install -qqy --no-install-recommends ca-certificates curl vim net-tools inetutils-ping netcat\
  && rm -rf /var/lib/apt/lists/* \
  && curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
  && curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -136,6 +136,7 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
 RUN mkdir -p /etc/pki/tls/certs && mkdir /etc/pki/tls/private
 ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
+ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
 ADD ./00-tcpdump-input.conf /etc/logstash/conf.d/00-tcpdump-input.conf
@@ -149,10 +150,10 @@ ADD ./99-output.conf /etc/logstash/conf.d/99-output.conf
 ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
 RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
-# templates
+# templates version 5
 # you need to add a template that supports geoip, run the below once the container is running and before ingest data
 # curl -XPUT 'http://localhost:9200/_template/logstash?pretty' -d@logstash-index-template.json
-ADD ./logstash-index-template.json /etc/logstash/logstash-index-template.json
+# ADD ./logstash-index-template.json /etc/logstash/logstash-index-template.json
 
 # Fix permissions
 RUN chmod -R +r /etc/logstash
@@ -185,5 +186,5 @@ RUN chmod +x /usr/local/bin/start.sh
 
 EXPOSE 5601 9200 9300 5044
 VOLUME /var/lib/elasticsearch
-
+VOLUME /var/lib/backup
 CMD [ "/usr/local/bin/start.sh" ]
