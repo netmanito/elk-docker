@@ -23,7 +23,7 @@ ENV GOSU_VERSION 1.8
 ARG DEBIAN_FRONTEND=noninteractive
 RUN set -x \
  && apt-get update -qq \
- && apt-get install -qqy --no-install-recommends ca-certificates curl \
+ && apt-get install -qqy --no-install-recommends ca-certificates curl vim net-tools\
  && rm -rf /var/lib/apt/lists/* \
  && curl -L -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
  && curl -L -o /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture).asc" \
@@ -36,6 +36,7 @@ RUN set -x \
  && apt-get update -qq \
  && apt-get install -qqy openjdk-8-jdk \
  && apt-get clean \
+ && echo "vm.max_map_count=262144" >> /etc/sysctl.conf \
  && set +x
 
 
@@ -56,13 +57,18 @@ RUN mkdir ${ES_HOME} \
  && rm -f ${ES_PACKAGE} \
  && groupadd -r elasticsearch -g ${ES_GID} \
  && useradd -r -s /usr/sbin/nologin -M -c "Elasticsearch service user" -u ${ES_UID} -g elasticsearch elasticsearch \
- && mkdir -p /var/log/elasticsearch ${ES_PATH_CONF} ${ES_PATH_CONF}/scripts /var/lib/elasticsearch \
- && chown -R elasticsearch:elasticsearch ${ES_HOME} /var/log/elasticsearch /var/lib/elasticsearch ${ES_PATH_CONF}
+ && mkdir -p /var/log/elasticsearch ${ES_PATH_CONF} ${ES_PATH_CONF}/scripts /var/lib/elasticsearch /var/lib/backup \
+ && chown -R elasticsearch:elasticsearch ${ES_HOME} /var/log/elasticsearch /var/lib/elasticsearch /var/lib/backup ${ES_PATH_CONF}
 
 ADD ./elasticsearch-init /etc/init.d/elasticsearch
 RUN sed -i -e 's#^ES_HOME=$#ES_HOME='$ES_HOME'#' /etc/init.d/elasticsearch \
  && chmod +x /etc/init.d/elasticsearch
 
+RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
+    -Edefault.path.conf=/etc/elasticsearch ingest-geoip
+
+#RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
+#    -Edefault.path.conf=/etc/elasticsearch x-pack
 
 ### install Logstash
 
@@ -71,6 +77,8 @@ ENV LOGSTASH_HOME /opt/logstash
 ENV LOGSTASH_PACKAGE logstash-${LOGSTASH_VERSION}.tar.gz
 ENV LOGSTASH_GID 992
 ENV LOGSTASH_UID 992
+ENV ES_HOST="192.168.1.90" 
+ENV ES_PORT=9200
 
 RUN mkdir ${LOGSTASH_HOME} \
  && curl -O https://artifacts.elastic.co/downloads/logstash/${LOGSTASH_PACKAGE} \
@@ -120,6 +128,7 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
     ${ES_PATH_CONF} \
  && chown -R elasticsearch:elasticsearch ${ES_PATH_CONF} \
  && chmod -R +r ${ES_PATH_CONF}
+# RUN cp -a /opt/elasticsearch/config/ingest-geoip /etc/elasticsearch/
 
 ### configure Logstash
 
@@ -129,17 +138,28 @@ ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
 
 # filters
-ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
+ADD ./00-tcpdump-input.conf /etc/logstash/conf.d/00-tcpdump-input.conf
+#ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
 ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
 ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
-ADD ./30-output.conf /etc/logstash/conf.d/30-output.conf
+ADD ./20-tcpdump.conf /etc/logstash/conf.d/20-tcpdump.conf
+ADD ./99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
 ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
 RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
+# templates
+# you need to add a template that supports geoip, run the below once the container is running and before ingest data
+# curl -XPUT 'http://localhost:9200/_template/logstash?pretty' -d@logstash-index-template.json
+ADD ./logstash-index-template.json /etc/logstash/logstash-index-template.json
+
 # Fix permissions
 RUN chmod -R +r /etc/logstash
+
+## Other stuff
+ADD ./deleteindex.sh /usr/bin/deleteindex.sh
+RUN chmod +x /usr/bin/deleteindex.sh
 
 ### configure logrotate
 
