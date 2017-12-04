@@ -1,1 +1,1 @@
-curl -XDELETE http://localhost:9200/$1
+curl -H "Content-Type: application/json" -XDELETE http://localhost:9200/$1

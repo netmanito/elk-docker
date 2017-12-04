@@ -82,6 +82,7 @@ network.host: 0.0.0.0
 #
 # ---------------------------------- Various -----------------------------------
 #
+# xpack.security.enabled: false
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true

@@ -67,9 +67,6 @@ RUN sed -i -e 's#^ES_HOME=$#ES_HOME='$ES_HOME'#' /etc/init.d/elasticsearch \
 RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
     -Edefault.path.conf=/etc/elasticsearch ingest-geoip
 
-#RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
-#    -Edefault.path.conf=/etc/elasticsearch x-pack
-
 ### install Logstash
 
 ENV LOGSTASH_VERSION ${ELK_VERSION}
@@ -114,7 +111,6 @@ RUN mkdir ${KIBANA_HOME} \
 ADD ./kibana-init /etc/init.d/kibana
 RUN sed -i -e 's#^KIBANA_HOME=$#KIBANA_HOME='$KIBANA_HOME'#' /etc/init.d/kibana \
  && chmod +x /etc/init.d/kibana
-
 
 ###############################################################################
 #                               CONFIGURATION
@@ -175,7 +171,6 @@ RUN chmod 644 /etc/logrotate.d/elasticsearch \
 ### configure Kibana
 
 ADD ./kibana.yml ${KIBANA_HOME}/config/kibana.yml
-
 
 ###############################################################################
 #                                   START
