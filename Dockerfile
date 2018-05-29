@@ -74,7 +74,7 @@ ENV LOGSTASH_HOME /opt/logstash
 ENV LOGSTASH_PACKAGE logstash-${LOGSTASH_VERSION}.tar.gz
 ENV LOGSTASH_GID 992
 ENV LOGSTASH_UID 992
-ENV ES_HOST="192.168.1.90" 
+ENV ES_HOST="localhost" 
 ENV ES_PORT=9200
 
 RUN mkdir ${LOGSTASH_HOME} \
@@ -135,16 +135,18 @@ ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
 ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
-ADD ./00-tcpdump-input.conf /etc/logstash/conf.d/00-tcpdump-input.conf
+#ADD ./00-tcpdump-input.conf /etc/logstash/conf.d/00-tcpdump-input.conf
+ADD ./01-json.conf /etc/logstash/conf.d/01-json.conf
 #ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
-ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
-ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
-ADD ./20-tcpdump.conf /etc/logstash/conf.d/20-tcpdump.conf
+#ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
+#ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
+ADD ./12-json.conf /etc/logstash/conf.d/12-json.conf
+#ADD ./20-tcpdump.conf /etc/logstash/conf.d/20-tcpdump.conf
 ADD ./99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
-ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
-RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
+#ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
+#RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
 # templates version 5
 # you need to add a template that supports geoip, run the below once the container is running and before ingest data

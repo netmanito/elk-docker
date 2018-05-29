@@ -10,7 +10,7 @@ elk:
   build: .
   ports:
     - "5601:5601"
-    - "9200:9200"
+    - "9200"
     - "5046:5046"
   volumes:
-    - /Users/jaci/tmp/elk-data/es6-data:/var/lib/elasticsearch
+    - /home/jaci/tmp/elk-data:/var/lib/elasticsearch
