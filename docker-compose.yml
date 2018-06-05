@@ -13,4 +13,5 @@ elk:
     - "9200"
     - "5046:5046"
   volumes:
-    - /home/jaci/tmp/elk-data:/var/lib/elasticsearch
+          #- /home/jaci/tmp/elk-data:/var/lib/elasticsearch
+    - /Users/jaci/tmp/elk-data/es6-data/:/var/lib/elasticsearch
