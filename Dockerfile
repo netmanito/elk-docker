@@ -8,8 +8,8 @@
 # docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk <repo-user>/elk
 
 FROM phusion/baseimage
-MAINTAINER Sebastien Pujadas http://pujadas.net
-ENV REFRESHED_AT 2017-01-13
+MAINTAINER Jacinto Calvo http://seriousman.org
+ENV REFRESHED_AT 2018-06-16
 
 
 ###############################################################################
@@ -40,7 +40,7 @@ RUN set -x \
  && set +x
 
 
-ENV ELK_VERSION 6.0.0
+ENV ELK_VERSION 6.2.0
 
 ### install Elasticsearch
 
@@ -130,19 +130,14 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
 
 # certs/keys for Beats and Lumberjack input
 RUN mkdir -p /etc/pki/tls/certs && mkdir /etc/pki/tls/private
-ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
-ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
+#ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
+#ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
 ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
-#ADD ./00-tcpdump-input.conf /etc/logstash/conf.d/00-tcpdump-input.conf
-ADD ./01-json.conf /etc/logstash/conf.d/01-json.conf
-#ADD ./02-beats-input.conf /etc/logstash/conf.d/02-beats-input.conf
-#ADD ./10-syslog.conf /etc/logstash/conf.d/10-syslog.conf
-#ADD ./11-nginx.conf /etc/logstash/conf.d/11-nginx.conf
-ADD ./12-json.conf /etc/logstash/conf.d/12-json.conf
-#ADD ./20-tcpdump.conf /etc/logstash/conf.d/20-tcpdump.conf
-ADD ./99-output.conf /etc/logstash/conf.d/99-output.conf
+ADD ./conf.d/01-json.conf /etc/logstash/conf.d/01-json.conf
+ADD ./conf.d/12-json.conf /etc/logstash/conf.d/12-json.conf
+ADD ./conf.d/99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
 #ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
