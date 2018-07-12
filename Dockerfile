@@ -136,7 +136,8 @@ ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
 ADD ./conf.d/01-json.conf /etc/logstash/conf.d/01-json.conf
-ADD ./conf.d/12-json.conf /etc/logstash/conf.d/12-json.conf
+ADD ./conf.d/14-json.conf /etc/logstash/conf.d/14-json.conf
+ADD ./conf.d/20-valid-nodeinfo.conf /etc/logstash/conf.d/20-valid-nodeinfo.conf
 ADD ./conf.d/99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
