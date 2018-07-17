@@ -15,3 +15,4 @@ elk:
   volumes:
           #- /home/jaci/tmp/elk-data:/var/lib/elasticsearch
     - /Users/jaci/tmp/elk-data/es6-data/:/var/lib/elasticsearch
+    - ~/alastria/logs/:/var/log/alastria

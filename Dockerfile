@@ -135,14 +135,15 @@ RUN mkdir -p /etc/pki/tls/certs && mkdir /etc/pki/tls/private
 ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
-ADD ./conf.d/01-json.conf /etc/logstash/conf.d/01-json.conf
-ADD ./conf.d/14-json.conf /etc/logstash/conf.d/14-json.conf
-ADD ./conf.d/20-valid-nodeinfo.conf /etc/logstash/conf.d/20-valid-nodeinfo.conf
-ADD ./conf.d/99-output.conf /etc/logstash/conf.d/99-output.conf
+#ADD ./conf.d/01-json.conf /etc/logstash/conf.d/01-json.conf
+ADD ./conf.d/10-quorum.conf /etc/logstash/conf.d/10-quorum.conf
+#ADD ./conf.d/14-json.conf /etc/logstash/conf.d/14-json.conf
+#ADD ./conf.d/20-valid-nodeinfo.conf /etc/logstash/conf.d/20-valid-nodeinfo.conf
+#ADD ./conf.d/99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
-#ADD ./nginx.pattern ${LOGSTASH_HOME}/patterns/nginx
-#RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
+ADD ./conf.d/patterns/quorum ${LOGSTASH_HOME}/patterns/quorum
+RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
 # templates version 5
 # you need to add a template that supports geoip, run the below once the container is running and before ingest data
