@@ -13,6 +13,10 @@ elk:
     - "9200:9200"
     - "5046:5046"
   volumes:
+    ## Elasticsearch mapped volume for persistent data
     #- /home/jaci/tmp/elk-data:/var/lib/elasticsearch
-    - /Users/jaci/tmp/elk-data/es6-data/:/var/lib/elasticsearch
+    - /Users/jaci/tmp/elk-data/es6-data:/var/lib/elasticsearch
+
+    ## Directory where logs to be analyzed are stored
     #- ~/alastria/logs/:/var/log/alastria
+    - /Users/jaci/tmp/elk-data/logs:/var/log/alastria

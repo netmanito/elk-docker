@@ -1,22 +1,60 @@
 # Elasticsearch, Logstash, Kibana (ELK) Docker image
 
-[![](https://badge.imagelayers.io/sebp/elk:latest.svg)](https://imagelayers.io/?images=sebp/elk:latest 'Get your own badge on imagelayers.io') [![Documentation Status](https://readthedocs.org/projects/elk-docker/badge/?version=latest)](http://elk-docker.readthedocs.io/?badge=latest)
 
 This Docker image provides a convenient centralised log server and log management web interface, by packaging Elasticsearch, Logstash, and Kibana, collectively known as ELK.
 
-Forked from [https://github.com/spujadas/elk-docker](https://github.com/spujadas/elk-docker) and adapted for personal uses.
+Forked from [https://github.com/spujadas/elk-docker](https://github.com/spujadas/elk-docker) and adapted for diferent uses.
+
+### Please ensure you're in the correct branch !!
+
 
 ###  Build with:
 
 ```
-docker build -t <repo-user>/elk .
+docker-compose -p <project-name> build 
 ```
 
 ### Run with:
 
 ```
-docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk <repo-user>/elk
+docker-compose -p <project-name> up 
 ```
+
+### Quorum Log configuration
+
+Make sure you set the volume paths correctly to your host paths in **docker-composer.yml**, this is an example for a linux environment.
+
+```
+  volumes:
+    ## Elasticsearch mapped volume for persistent data
+    - /home/<user>/tmp/elk-data:/var/lib/elasticsearch
+    
+    ## Directory where logs to be analyzed are stored
+    - /home/<user>/alastria/logs/:/var/log/alastria
+```
+
+**/var/lib/elasticsearch/** is where elasticsearch will store it's data, map it to an external volume or a docker volume if you want to keep the data on restarts.
+
+Logstash is configured to read **/var/log/alastria/quorum_YYYY-mm-dd.log** files by default, if you want to change the path or filenames, edit **./conf.d/10-quorum.conf** and rebuild the project.
+You can also log into the running container and edit **/etc/logstash/conf.d/10-quorum.conf**, Logstash will restart your configuration changes after 10 seconds.
+
+If the system is not indexing after a restart, try to remove **/opt/logstash/data/plugins/inputs/file/.sincedb_xXxxXxxXXXxxXxxXXXxxXxXxxXX**
+
+#### Checks and configurations for quorum.
+
+The project is meant to work automatically to read quorum logs.
+Once everything is up, you can check on Kibana **http://localhost:5601** if everything is fine.
+
+First go to *dev tools* section and check if there are indices ongoing
+
+	GET _cat/indices?pretty
+
+If quorum_YYYY-mm-dd is available, get to Manage section and create the Index-Pattern.
+
+Then go to *Saved Objects* and **import** *templates/quorum_searches.json*
+
+Now you'll have some saved searches and graphs.
+
 
 ### Documentation
 

@@ -142,6 +142,7 @@ ADD ./conf.d/10-quorum.conf /etc/logstash/conf.d/10-quorum.conf
 #ADD ./conf.d/99-output.conf /etc/logstash/conf.d/99-output.conf
 
 # patterns
+RUN mkdir -p /etc/logstash/conf.d/patterns
 ADD ./conf.d/patterns/quorum ${LOGSTASH_HOME}/patterns/quorum
 RUN chown -R logstash:logstash ${LOGSTASH_HOME}/patterns
 
