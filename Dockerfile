@@ -5,11 +5,11 @@
 # docker build -t <repo-user>/elk .
 
 # Run with:
-# docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk <repo-user>/elk
+# docker run -p 5601:5601 -p 9200:9200 -p 5046:5046 -it --name elk <repo-user>/elk
 
 FROM phusion/baseimage
-MAINTAINER Jacinto Calvo http://seriousman.org
-ENV REFRESHED_AT 2018-06-16
+MAINTAINER Jacinto Calvo https://seriousman.org
+ENV REFRESHED_AT 2018-07-17
 
 
 ###############################################################################
