@@ -157,6 +157,7 @@ RUN chmod -R +r /etc/logstash
 ## Other stuff
 ADD ./deleteindex.sh /usr/bin/deleteindex.sh
 RUN chmod +x /usr/bin/deleteindex.sh
+RUN mkdir -p /var/log/alastria
 
 ### configure logrotate
 
@@ -181,5 +182,5 @@ RUN chmod +x /usr/local/bin/start.sh
 
 EXPOSE 5601 9200 9300 5044
 VOLUME /var/lib/elasticsearch
-VOLUME /var/lib/backup
+VOLUME /var/log/alastria
 CMD [ "/usr/local/bin/start.sh" ]
