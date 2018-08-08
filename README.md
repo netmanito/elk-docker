@@ -7,17 +7,16 @@ Forked from [https://github.com/spujadas/elk-docker](https://github.com/spujadas
 
 ### Please ensure you're in the correct branch !!
 
+## quorum branch 
 
-###  Build with:
-
+Get to the correct branch
 ```
-docker-compose -p <project-name> build 
+git checkout quorum
 ```
 
-### Run with:
-
+Update
 ```
-docker-compose -p <project-name> up 
+git pull
 ```
 
 ### Quorum Log configuration
@@ -36,9 +35,17 @@ Make sure you set the volume paths correctly to your host paths in **docker-comp
 **/var/lib/elasticsearch/** is where elasticsearch will store it's data, map it to an external volume or a docker volume if you want to keep the data on restarts.
 
 Logstash is configured to read **/var/log/alastria/quorum_YYYY-mm-dd.log** files by default, if you want to change the path or filenames, edit **./conf.d/10-quorum.conf** and rebuild the project.
-You can also log into the running container and edit **/etc/logstash/conf.d/10-quorum.conf**, Logstash will restart your configuration changes after 10 seconds.
+You can also log into the running container and edit 
 
-If the system is not indexing after a restart, try to remove **/opt/logstash/data/plugins/inputs/file/.sincedb_xXxxXxxXXXxxXxxXXXxxXxXxxXX**
+```/etc/logstash/conf.d/10-quorum.conf``` 
+
+Logstash will restart your configuration changes after 10 seconds.
+
+If the system is not indexing after a restart, try to remove 
+
+```
+/opt/logstash/data/plugins/inputs/file/.sincedb_xXxxXxxXXXxxXxxXXXxxXxXxxXX
+```
 
 #### Checks and configurations for quorum.
 
@@ -55,6 +62,18 @@ Then go to *Saved Objects* and **import** *templates/quorum_searches.json*
 
 Now you'll have some saved searches and graphs.
 
+###  Build with:
+
+```
+docker-compose -p <project-name> build 
+```
+
+### Run with:
+
+```
+docker-compose -p <project-name> up 
+```
+
 
 ### Documentation
 
@@ -63,5 +82,5 @@ See the [ELK Docker image documentation web page](http://elk-docker.readthedocs.
 
 ### About
 
-Written by [Sébastien Pujadas](https://pujadas.net), released under the [Apache 2 license](https://www.apache.org/licenses/LICENSE-2.0).
+Branch Written by [Jacinto Calvo](https://seriousman.org), released under the [Apache 2 license](https://www.apache.org/licenses/LICENSE-2.0).
 
