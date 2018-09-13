@@ -1,3 +1,6 @@
 x-pack-6.0.0.zip
 .DS_Store
 .DS_Store?
+docs/Alastria ELK via NETSTATS.pdf
+templates/kibana_alastria_objects_2.json
+templates/kibana_alastria_objects_new.json

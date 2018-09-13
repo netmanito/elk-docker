@@ -40,7 +40,7 @@ RUN set -x \
  && set +x
 
 
-ENV ELK_VERSION 6.0.0
+ENV ELK_VERSION 6.4.0
 
 ### install Elasticsearch
 
@@ -64,8 +64,8 @@ ADD ./elasticsearch-init /etc/init.d/elasticsearch
 RUN sed -i -e 's#^ES_HOME=$#ES_HOME='$ES_HOME'#' /etc/init.d/elasticsearch \
  && chmod +x /etc/init.d/elasticsearch
 
-RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
-    -Edefault.path.conf=/etc/elasticsearch ingest-geoip
+#RUN gosu elasticsearch ${ES_HOME}/bin/elasticsearch-plugin install \
+#    -Edefault.path.conf=/etc/elasticsearch ingest-geoip
 
 ### install Logstash
 
