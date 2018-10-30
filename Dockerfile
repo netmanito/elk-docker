@@ -132,7 +132,7 @@ RUN cp ${ES_HOME}/config/log4j2.properties ${ES_HOME}/config/jvm.options \
 RUN mkdir -p /etc/pki/tls/certs && mkdir /etc/pki/tls/private
 #ADD ./logstash-beats.crt /etc/pki/tls/certs/logstash-beats.crt
 #ADD ./logstash-beats.key /etc/pki/tls/private/logstash-beats.key
-ADD ./logstash.yml /opt/logstash/config/logstash.yml
+#ADD ./logstash.yml /opt/logstash/config/logstash.yml
 
 # filters
 #ADD ./conf.d/01-json.conf /etc/logstash/conf.d/01-json.conf
@@ -180,7 +180,7 @@ ADD ./kibana.yml ${KIBANA_HOME}/config/kibana.yml
 ADD ./start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-EXPOSE 5601 9200 9300 5044
+EXPOSE 5601 9200 9300 5046
 VOLUME /var/lib/elasticsearch
 VOLUME /var/log/alastria
 CMD [ "/usr/local/bin/start.sh" ]
